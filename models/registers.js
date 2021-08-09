@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
 
 const userSchema = new mongoose.Schema({
     username :{
@@ -15,28 +16,15 @@ const userSchema = new mongoose.Schema({
     }
 
 })
-// const productSchema = new mongoose.Schema({
-//     productName :{
-//         type:String,
-//         required : true
-//     },
-//     productType :{
-//         type:String , 
-//         required:true,
-//     },
-//     availibilityDate :{
-//         type:String , 
-//         required:true,
-//     },
-//     price :{
-//         type:String , 
-//         required:true,
-//     }
-// })
 
+userSchema.pre("save" , async function(next){
+    if(this.isModified("password")){
+        this.password = await bcrypt.hash(this.password,10);
+        this.confirmpassword = undefined;
+    }
+    next();
+})
 //creating collections 
 
 const Register = new mongoose.model("User",userSchema);
-// const PRegister = new mongoose.model("Product" , productSchema);
 module.exports = Register ;
-// module.exports = PRegister;

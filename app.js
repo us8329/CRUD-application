@@ -1,20 +1,20 @@
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
 
 require("./db/connection");
 const app = express();
-// const bcrypt  = require('bcrypt')
+
 
 const Register = require('./models/registers');
+const ProductRegisters = require('./models/productRegisters');
+
 const mongoose = require('mongoose')
 const { Session } = require('inspector');
 const PRegister = require('./models/registers');
 const port = 5050;
-// const two_hours = 1000*60*60*2;
-// const users = [
-//     { id : 1 , email: 'test@gmail.com' , password: 'test'},
-// ] 
+
 app.set('view-engine' , 'ejs');
 app.use(express.urlencoded({extended:false}))
 
@@ -33,8 +33,6 @@ app.use(bodyParser.urlencoded({extended:true}))
 //         secure: false,
 //     }
 // }))
-
-// app.use('/router' ,router);
 
 const redirectLogin = (req,res,next)=>{
     if(!req.ssession.userId){
@@ -101,9 +99,12 @@ app.post('/signup', async (req,res)=>{
         if(password === cpassword){
              const userRegister = new Register({
                  username : req.body.username,
-                 password : req.body.password,
-                 confirmpassword : req.body.confirmpassword
+                 password : password,
+                 confirmpassword : cpassword,
              })
+
+             //hash password using middleware 
+
              const registered = await userRegister.save();
             //  res.status(201).redirect(login);
             res.redirect('/login')
@@ -125,35 +126,40 @@ app.post('/login' , async(req,res)=>{
     try{
         const username = req.body.username;
         const password = req.body.password;
-        
         const username_check = await Register.findOne({username : username});
-        if(username_check.password === password){
-            res.status(201).render("home")
+
+        const isMatch = await bcrypt.compare(password , username_check.password)
+        if(isMatch){
+            res.redirect('/home')
         }
+        else{
+            res.send("invalid login credentials")
+        }
+
     }catch(error){
-        res.status(400).send("Invalid username");
+        res.status(400).send("Invalid user");
     }
 })
-// app.post('/home', async(req,res)=>{
-//     try{
-//         const Products = new PRegister({
-//             productName : req.body.productName,
-//             productType : re.body.productType,
-//             availibilityDate : req.body.availibilityDate,
-//             price : req.body.price
-//         })
-//     }catch(error){
-//         res.status(400).send(error);
-//     }
-// })
+app.post('/home', async(req,res)=>{
+    try{
+        const productRegister  = new ProductRegisters({
+            productName : req.body.productName,
+            productType : re.body.productType,
+            availibilityDate : req.body.availibilityDate,
+            price : req.body.price
+        })
+    }catch(error){
+        res.status(400).send(error);
+    }
+})
 app.post('/logout',(req,res)=>{
-    req.session.destroy(err=>{
-        if(err){
-            return res.render('home')
-        }
-        res.clearCookie('sessionId')
+    // req.session.destroy(err=>{
+        // if(err){
+        //     return res.render('home')
+        // }
+        // res.clearCookie('sessionId')
         res.redirect('/login')
-    })
+    // })
 })
 
 // app.post('/home' , (req,res)=>{
