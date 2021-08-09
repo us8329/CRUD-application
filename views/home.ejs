@@ -38,91 +38,84 @@
             <button class="btn btn-secondary">
               logout
             </button>
+            </form>
          </li>
      </ul>
    </nav>
 
    
-   <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#exampleModalCenter">
-            Add Product
-          </button>
-          <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalCenterTitle">Add Product</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                    <form id='product-info' method = "POST" action="/home">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="" id="productName" name = "productName">
-                            <small class="form-text text-muted text-left">name of product</small>
-                        </div>
-                        <div class="form-group">
-                            <select class="form-control" id="productType" name= "productType">
-                                <option>--N/A--</option>
-                                <option>Books</option>
-                                <option>Movies</option>
-                                <option>Medicine</option>
-                                <option>Electronics</option>
-                                <option>Clothing</option>
-                                <option>accessories</option>
-                                <option>Lifestyle</option>
-                           </select>
-                            <small class="form-text text-muted text-left">mention type of product</small>
-                            
-                        </div>
-                        <div class="form-group">
-                          <input type="date" class="form-control" placeholder="dd/mm/yyyy" id="availibilityDate" name = "availibilityDate">
-                          <small class="form-text text-muted text-left">date of availibility</small>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="99.99" id="price" name="price">
-                            <small class="form-text text-muted text-left">cost of the product in ₹</small>
-                          </div>
-                        <!-- <div class="form-group">
-                            <input type="file" class="form-control" id="image" name="image">
-                            <small class="form-text text-muted text-left">select image of product</small>
-                          </div> -->
-                        <div class="modal-footer">
-                            <button type="button"  class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                            <button  type="submit" id='savebtn'  class="btn btn-primary" data-dismiss="modal">Save Product</button>
-                        </div>
-                    </form>
-                </div>
-               
-              </div>
-            </div>
-          </div>
+<div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalCenterTitle">Add Product</h5>
     </div>
+    <div class="modal-body">
+    <form  action="/home" method = "POST">
+      <div class="form-group">
+          <input type="text" class="form-control" placeholder="" id="productName" name = "productName">
+          <small class="form-text text-muted text-left">name of product</small>
+      </div>
+      <div class="form-group">
+          <select class="form-control" id="productType" name= "productType">
+              <option>--N/A--</option>
+              <option>Books</option>
+              <option>Movies</option>
+              <option>Medicine</option>
+              <option>Electronics</option>
+              <option>Clothing</option>
+              <option>accessories</option>
+              <option>Lifestyle</option>
+         </select>
+          <small class="form-text text-muted text-left">mention type of product</small>
+          
+      </div>
+      <div class="form-group">
+        <input type="date" class="form-control" placeholder="dd/mm/yyyy" id="availibilityDate" name = "availibilityDate">
+        <small class="form-text text-muted text-left">date of availibility</small>
+      </div>
+      <div class="form-group">
+          <input type="text" class="form-control" placeholder="99.99" id="price" name="price">
+          <small class="form-text text-muted text-left">cost of the product in ₹</small>
+        </div>
+        <div class="form-group">
+          <input type="file" class="form-control" name="image">
+          <small class="form-text text-muted text-left">Product Image</small>
+        </div>
+      <div class="modal-footer">
+          <button type="button"  class="btn btn-secondary" data-dismiss="modal">Close</button>
 
-    <div class="row">
-        <table  class="table" id="display">
-                    <thead>
-                        <tr>
-                            <th class="text-center ">Product Id</th>
-                            <th class="text-center ">Product Name</th>
-                            <th class="text-center ">Product Type</th>
-                            <th class="text-center ">Date of Availibility</th>
-                            <th class="text-center ">Price</th>
-                            <!-- <th class="text-center ">Product Image</th> -->
-                        </tr>
-                       </thead>
-                       <thead>
-                        <tr>
-                            <td class="text-center">{{productId}}</td>
-                            <td class="text-center ">{{productName}}</td>
-                            <td class="text-center ">{{productType}}</td>
-                            <td class="text-center ">{{availibilityDate}}</td>
-                            <td class="text-center ">{{price}}</td>
-                            <!-- <td class="text-center ">{{image}}</td> -->
-                        </tr>
-                       </thead>
-            </table>
-    </div>    
+          <button  type="submit" class="btn btn-primary" data-dismiss="modal">Save Product</button>
+      </div>
+  </form>
+</div>
+</div>
+</div>
+
+<div class="row">
+  <table  class="table" id="display">
+    <thead>
+      <tr>
+        <th class="text-center ">Product Id</th>
+        <th class="text-center ">Product Name</th>
+        <th class="text-center ">Product Type</th>
+        <th class="text-center ">Date of Availibility</th>
+        <th class="text-center ">Price</th>
+        <th class="text-center ">Product Image</th>
+      </tr>
+    </thead>
+    <thread>
+        <% records.forEach(function(row){%>
+          <tr>
+            <td class="text-center "><%= row._id%></td>
+            <td class="text-center "><%= row.productName%></td>
+            <td class="text-center "><%= row.productType%></td>
+            <td class="text-center "><%= row.availibilityDate%></td>
+            <td class="text-center "><%= row.price%></td>
+          </tr>
+        <% }) %>
+    </thread>
+  </table>
 </body>
+
+
+</div>    

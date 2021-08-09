@@ -2,25 +2,146 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose')
+const multer = require('multer')
+const Register = require('./models/registers');
+const PRegister = require('./models/productRegisters')
+var Product = PRegister.find({});
+const { Session } = require('inspector');
+const port = 5050;
+const two_hours = 7200000
 
 require("./db/connection");
 const app = express();
 
-
-const Register = require('./models/registers');
-const ProductRegisters = require('./models/productRegisters');
-
-const mongoose = require('mongoose')
-const { Session } = require('inspector');
-const PRegister = require('./models/registers');
-const port = 5050;
-
 app.set('view-engine' , 'ejs');
 app.use(express.urlencoded({extended:false}))
 
-app.use(express.json());
+app.use(session({
+    name :'sessionId',
+    resave: false,
+    saveUninitialized: false, 
+    secret: 'it is a secret' , 
+    cookie:{
+        maxAge:two_hours,
+        sameSite : true,
+        secure: false,
+    }
+}))
 
+app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}))
+
+app.get('/',(req,res)=>{
+    res.render('index.ejs' , {title : 'index page'})
+})
+app.get('/login' , (req,res)=>{
+    res.render('login.ejs' , {title:'login'})
+})
+app.get('/signup' , (req,res)=>{
+    res.render('signup.ejs' , {title: 'Signup'})
+})
+app.get('/home', (req,res , next)=>{
+    Product.exec(function(err , data){
+        res.render('home.ejs', {title:'Home', records : data})
+    });
+    
+})
+
+app.post('/signup', async (req,res)=>{
+    try{
+        const password = req.body.password;
+        const cpassword = req.body.confirmpassword;
+        if(password === cpassword){
+             const userRegister = new Register({
+                 username : req.body.username,
+                 password : password,
+                 confirmpassword : cpassword,
+             })
+
+             const registered = await userRegister.save();
+            res.redirect('/login')
+        }else{
+            res.send('passwords do not match')
+        }
+
+    }catch (error){
+        res.status(400).send(error);
+    }
+})
+
+app.post('/login' , async(req,res)=>{
+    try{
+        const username = req.body.username;
+        const password = req.body.password;
+        const username_check = await Register.findOne({username : username});
+
+        const isMatch = await bcrypt.compare(password , username_check.password)
+        if(isMatch){
+            res.redirect('/home')
+        }
+        else{
+            res.send("invalid login credentials")
+        }
+
+    }catch(error){
+        res.status(400).send("Invalid user");
+    }
+})
+
+app.post('/home', async(req,res)=>{
+    try{
+
+        const pName = req.body.productName;
+        const pType = req.body.productType;
+        const avDate = req.body.availibilityDate;
+        const price = req.body.price;
+        if(pName){
+        const productRegister = new PRegister({
+            productName: pName,
+            productType: pType,
+            availibilityDate:avDate,
+            price:price
+        })
+        const product_registered = await productRegister.save();
+        res.redirect('/home')
+    }else{
+        res.status(400).send("please enter details");
+    }
+    }catch(error){
+        res.status(400).send(error);
+    }
+
+})
+
+// app.post('/fuck' , (req,res)=>{
+//     const fuckinghell = req.body.fucking;
+//     console.log(fuckinghell);
+//     res.redirect('/home')
+// })
+app.post('/logout',(req,res)=>{
+    // req.session.destroy(err=>{
+        // if(err){
+        //     return res.render('home')
+        // }
+        // res.clearCookie('sessionId')
+        res.redirect('/login')
+    // })
+})
+
+
+app.listen(port ,() => console.log('app is listening'))
+
+
+
+// const redirectLogin = (req,res,next)=>{
+//     if(!req.ssession.userId){
+//         res.redirect('/login')
+//     }else{
+//         next()
+//     }
+// }
+
 
 // app.use(session({
 //     name :'sessionId',
@@ -34,23 +155,6 @@ app.use(bodyParser.urlencoded({extended:true}))
 //     }
 // }))
 
-const redirectLogin = (req,res,next)=>{
-    if(!req.ssession.userId){
-        res.redirect('/login')
-    }else{
-        next()
-    }
-}
-app.get('/',(req,res)=>{
-    // const userId = 1
-    // const { userId } = req.session
-    // console.log(userId);
-    res.render('index.ejs' , {title : 'index page'})
-})
-
-app.get('/login' , (req,res)=>{
-    res.render('login.ejs' , {title:'login'})
-})
 
 // app.post('/login' , (req,res)=>{
 //     const {email , password} = req.body
@@ -66,9 +170,6 @@ app.get('/login' , (req,res)=>{
 //     res.redirect('/login')
 // })
 
-app.get('/signup' , (req,res)=>{
-    res.render('signup.ejs' , {title: 'Signup'})
-})
 
 // app.post('/signup' , (req,res)=>{
 //     const {email , password} = req.body
@@ -92,76 +193,6 @@ app.get('/signup' , (req,res)=>{
 // })
 
 
-app.post('/signup', async (req,res)=>{
-    try{
-        const password = req.body.password;
-        const cpassword = req.body.confirmpassword;
-        if(password === cpassword){
-             const userRegister = new Register({
-                 username : req.body.username,
-                 password : password,
-                 confirmpassword : cpassword,
-             })
-
-             //hash password using middleware 
-
-             const registered = await userRegister.save();
-            //  res.status(201).redirect(login);
-            res.redirect('/login')
-        }else{
-            res.send('passwords do not match')
-        }
-
-    }catch (error){
-        res.status(400).send(error);
-    }
-})
-
-
-app.get('/home', (req,res)=>{
-    res.render('home.ejs', {title:'Home'})
-})
-
-app.post('/login' , async(req,res)=>{
-    try{
-        const username = req.body.username;
-        const password = req.body.password;
-        const username_check = await Register.findOne({username : username});
-
-        const isMatch = await bcrypt.compare(password , username_check.password)
-        if(isMatch){
-            res.redirect('/home')
-        }
-        else{
-            res.send("invalid login credentials")
-        }
-
-    }catch(error){
-        res.status(400).send("Invalid user");
-    }
-})
-app.post('/home', async(req,res)=>{
-    try{
-        const productRegister  = new ProductRegisters({
-            productName : req.body.productName,
-            productType : re.body.productType,
-            availibilityDate : req.body.availibilityDate,
-            price : req.body.price
-        })
-    }catch(error){
-        res.status(400).send(error);
-    }
-})
-app.post('/logout',(req,res)=>{
-    // req.session.destroy(err=>{
-        // if(err){
-        //     return res.render('home')
-        // }
-        // res.clearCookie('sessionId')
-        res.redirect('/login')
-    // })
-})
-
 // app.post('/home' , (req,res)=>{
 //     const {userId} = req.session
 //     const products= []
@@ -182,4 +213,3 @@ app.post('/logout',(req,res)=>{
 
 //     // console.log(products)
 // })
-app.listen(port ,() => console.log('app is listening'))
