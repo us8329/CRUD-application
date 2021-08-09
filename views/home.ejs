@@ -84,10 +84,10 @@
                             <input type="text" class="form-control" placeholder="99.99" id="price" name="price">
                             <small class="form-text text-muted text-left">cost of the product in ₹</small>
                           </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <input type="file" class="form-control" id="image" name="image">
                             <small class="form-text text-muted text-left">select image of product</small>
-                          </div>
+                          </div> -->
                         <div class="modal-footer">
                             <button type="button"  class="btn btn-secondary" data-dismiss="modal">Close</button>
 
@@ -105,11 +105,22 @@
         <table  class="table" id="display">
                     <thead>
                         <tr>
+                            <th class="text-center ">Product Id</th>
                             <th class="text-center ">Product Name</th>
                             <th class="text-center ">Product Type</th>
                             <th class="text-center ">Date of Availibility</th>
                             <th class="text-center ">Price</th>
-                            <th class="text-center ">Product Image</th>
+                            <!-- <th class="text-center ">Product Image</th> -->
+                        </tr>
+                       </thead>
+                       <thead>
+                        <tr>
+                            <td class="text-center">{{productId}}</td>
+                            <td class="text-center ">{{productName}}</td>
+                            <td class="text-center ">{{productType}}</td>
+                            <td class="text-center ">{{availibilityDate}}</td>
+                            <td class="text-center ">{{price}}</td>
+                            <!-- <td class="text-center ">{{image}}</td> -->
                         </tr>
                        </thead>
             </table>
