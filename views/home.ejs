@@ -50,7 +50,9 @@
       <h5 class="modal-title" id="exampleModalCenterTitle">Add Product</h5>
     </div>
     <div class="modal-body">
-    <form  action="/home" method = "POST">
+    <form  action="/home" method = "POST" >
+    <!-- </form>enctype="multipart/form-data" > -->
+    <!-- </form>enctype="multipart/form-data"> -->
       <div class="form-group">
           <input type="text" class="form-control" placeholder="" id="productName" name = "productName">
           <small class="form-text text-muted text-left">name of product</small>
@@ -62,6 +64,7 @@
               <option>Movies</option>
               <option>Medicine</option>
               <option>Electronics</option>
+              <option>Sports</option>
               <option>Clothing</option>
               <option>accessories</option>
               <option>Lifestyle</option>
@@ -77,13 +80,15 @@
           <input type="text" class="form-control" placeholder="99.99" id="price" name="price">
           <small class="form-text text-muted text-left">cost of the product in ₹</small>
         </div>
+
+        <!-- <form action="/upload" method="POST" enctype="multipart/form-data"> -->
         <div class="form-group">
-          <input type="file" class="form-control" name="image">
+          <input type="file" class="form-control" name="productImage">
           <small class="form-text text-muted text-left">Product Image</small>
         </div>
-      <div class="modal-footer">
-          <button type="button"  class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!-- </form> -->
 
+      <div class="modal-footer">
           <button  type="submit" class="btn btn-primary" data-dismiss="modal">Save Product</button>
       </div>
   </form>
@@ -111,6 +116,12 @@
             <td class="text-center "><%= row.productType%></td>
             <td class="text-center "><%= row.availibilityDate%></td>
             <td class="text-center "><%= row.price%></td>
+            <td class="text-center "><%= row.image%></td>
+            <!-- <td>
+              <% if(row.image){ %>
+              <img src="./uploads/<%= row.image%>" alt="product image" width="70">
+              <% } %>
+            </td> -->
           </tr>
         <% }) %>
     </thread>

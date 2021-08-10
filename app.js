@@ -96,12 +96,14 @@ app.post('/home', async(req,res)=>{
         const pType = req.body.productType;
         const avDate = req.body.availibilityDate;
         const price = req.body.price;
+        const image = req.body.productImage;
         if(pName){
         const productRegister = new PRegister({
             productName: pName,
             productType: pType,
             availibilityDate:avDate,
-            price:price
+            price:price,
+            image: image
         })
         const product_registered = await productRegister.save();
         res.redirect('/home')
@@ -213,3 +215,4 @@ app.listen(port ,() => console.log('app is listening'))
 
 //     // console.log(products)
 // })
+
