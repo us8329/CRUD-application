@@ -50,9 +50,7 @@
       <h5 class="modal-title" id="exampleModalCenterTitle">Add Product</h5>
     </div>
     <div class="modal-body">
-    <form  action="/home" method = "POST" >
-    <!-- </form>enctype="multipart/form-data" > -->
-    <!-- </form>enctype="multipart/form-data"> -->
+    <form  action="/home" method = "POST" enctype="multipart/form-data">
       <div class="form-group">
           <input type="text" class="form-control" placeholder="" id="productName" name = "productName">
           <small class="form-text text-muted text-left">name of product</small>
@@ -116,12 +114,11 @@
             <td class="text-center "><%= row.productType%></td>
             <td class="text-center "><%= row.availibilityDate%></td>
             <td class="text-center "><%= row.price%></td>
-            <td class="text-center "><%= row.image%></td>
-            <!-- <td>
+            <td>
               <% if(row.image){ %>
-              <img src="./uploads/<%= row.image%>" alt="product image" width="70">
+              <img src="./uploads/<%= row.image%>"  alt="product image" width="70">
               <% } %>
-            </td> -->
+            </td>
           </tr>
         <% }) %>
     </thread>

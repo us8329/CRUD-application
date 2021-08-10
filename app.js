@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose')
 const multer = require('multer')
+const path = require('path');
 const Register = require('./models/registers');
 const PRegister = require('./models/productRegisters')
 var Product = PRegister.find({});
@@ -16,6 +17,19 @@ const app = express();
 
 app.set('view-engine' , 'ejs');
 app.use(express.urlencoded({extended:false}))
+
+app.use(express.static(__dirname + "./public/"));
+
+const storage = multer.diskStorage({
+    destination:"./public/uploads",
+    filename: (req,file,cb)=>{
+        cb(null,file.fieldname + "_" + Date.now()+ path.extname(file.originalname)); 
+    }
+});
+const upload = multer({ 
+    storage: storage 
+}) .single('productImage');
+
 
 app.use(session({
     name :'sessionId',
@@ -89,14 +103,14 @@ app.post('/login' , async(req,res)=>{
     }
 })
 
-app.post('/home', async(req,res)=>{
+app.post('/home',upload ,  async(req,res)=>{
     try{
 
         const pName = req.body.productName;
         const pType = req.body.productType;
         const avDate = req.body.availibilityDate;
         const price = req.body.price;
-        const image = req.body.productImage;
+        const image = req.file.filename;
         if(pName){
         const productRegister = new PRegister({
             productName: pName,
@@ -116,11 +130,6 @@ app.post('/home', async(req,res)=>{
 
 })
 
-// app.post('/fuck' , (req,res)=>{
-//     const fuckinghell = req.body.fucking;
-//     console.log(fuckinghell);
-//     res.redirect('/home')
-// })
 app.post('/logout',(req,res)=>{
     // req.session.destroy(err=>{
         // if(err){
