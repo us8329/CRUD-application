@@ -1,9 +1,10 @@
 <title><%= title%></title>
-<body>
+
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
 
 <style>
@@ -26,6 +27,10 @@
     #display th, #display td{
         text-align: center;
     }
+    .btn-sm{
+      color: white;
+      background-color: red;
+    }
     </style>
 
 <nav class="navbar navbar-light bg-light" style="margin-bottom: 10px">
@@ -43,6 +48,7 @@
      </ul>
    </nav>
 
+   
    
 <div class="modal-dialog modal-dialog-centered" role="document">
   <div class="modal-content">
@@ -95,35 +101,60 @@
 </div>
 
 <div class="row">
-  <table  class="table" id="display">
-    <thead>
-      <tr>
-        <th class="text-center ">Product Id</th>
-        <th class="text-center ">Product Name</th>
-        <th class="text-center ">Product Type</th>
-        <th class="text-center ">Date of Availibility</th>
-        <th class="text-center ">Price</th>
-        <th class="text-center ">Product Image</th>
-      </tr>
-    </thead>
-    <thread>
-        <% records.forEach(function(row){%>
-          <tr>
-            <td class="text-center "><%= row._id%></td>
-            <td class="text-center "><%= row.productName%></td>
-            <td class="text-center "><%= row.productType%></td>
-            <td class="text-center "><%= row.availibilityDate%></td>
-            <td class="text-center "><%= row.price%></td>
-            <td>
-              <% if(row.image){ %>
-              <img src="./uploads/<%= row.image%>"  alt="product image" width="70">
-              <% } %>
-            </td>
-          </tr>
-        <% }) %>
-    </thread>
-  </table>
-</body>
+  <% if (records!= ''){%>
+    <table  class="table" id="display">
+      <thead>
+        <tr>
+          <th class="text-center ">Product Id</th>
+          <th class="text-center ">Product Name</th>
+          <th class="text-center ">Product Type</th>
+          <th class="text-center ">Date of Availibility</th>
+          <th class="text-center ">Price</th>
+          <th class="text-center ">Product Image</th>
+          <th class="text-center ">Action</th>
+        </tr>
+      </thead>
+      <thread>
+          <% records.forEach(function(row){%>
+            <tr>
+              <td class="text-center "><%= row._id%></td>
+              <td class="text-center "><%= row.productName%></td>
+              <td class="text-center "><%= row.productType%></td>
+              <td class="text-center "><%= row.availibilityDate%></td>
+              <td class="text-center "><%= row.price%></td>
+              <td>
+                <% if(row.image){ %>
+                <img src="<%= row.image%>" alt = "<%= row.image%>">
+                <% } %>
+              </td>
+              <td>
+                <!-- <button type="button" class =" btn btn-primary btn-md">edit</button> -->
+                <!-- <button type="button" class ="btn btn-light btn-sm">delete</button> -->
+                <a href='/edit' class="text-success">
+                  <i class = 'fas fa-edit fa-lg mx-2'></i>
+                </a>
+                <a href='/delete' class="text-danger">
+                  <i class = 'fas fa-trash fa-lg mx-2 red-color'></i>
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+      </thread>
+    </table>
+    <%}%> 
+</div>
 
-
-</div>    
+<!-- <script>
+  const loadImages = async()=>{
+    const response = await fetch('http://localhost:5050/uploads                                                                                                    ').then(response => response.json());
+    const imagesElement = document.querySelector('.uploads');
+    imagesElement.innerHTML = '';
+    response.uploads.forEach(upload =>{
+      const img = document.createElement('img');
+      img.src = upload.filePath;
+      img.width = '70';
+      imagesElement.appendChild(img)
+    });
+  };
+  window.onload = loadImages;
+</script> -->

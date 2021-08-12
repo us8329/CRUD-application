@@ -9,6 +9,7 @@ const Register = require('./models/registers');
 const PRegister = require('./models/productRegisters')
 var Product = PRegister.find({});
 const { Session } = require('inspector');
+const uuid  = require('uuid').v4; 
 const port = 5050;
 const two_hours = 7200000
 
@@ -18,15 +19,25 @@ const app = express();
 app.set('view-engine' , 'ejs');
 app.use(express.urlencoded({extended:false}))
 
-app.use(express.static(__dirname + "./public/"));
+
+app.use(express.static(__dirname + "./public"));
+
 
 const storage = multer.diskStorage({
-    destination:"./public/uploads",
+    // destination:"./public/uploads",
+    destination:(req,res,cb)=>{
+        cb(null,'')
+    },
     filename: (req,file,cb)=>{
-        cb(null,file.fieldname + "_" + Date.now()+ path.extname(file.originalname)); 
+        const ext = path.extname(file.originalname)
+        // const { originalname } = file;
+        const filePath = '/Users/utkarshsinha/mongoosedemo/public/uploads/'
+        cb(null,filePath + Date.now()+"_"+file.originalname)
     }
 });
-const upload = multer({ 
+
+
+const upload = multer({  
     storage: storage 
 }) .single('productImage');
 
@@ -131,13 +142,13 @@ app.post('/home',upload ,  async(req,res)=>{
 })
 
 app.post('/logout',(req,res)=>{
-    // req.session.destroy(err=>{
-        // if(err){
-        //     return res.render('home')
-        // }
-        // res.clearCookie('sessionId')
+    req.session.destroy(err=>{
+        if(err){
+            return res.render('home')
+        }
+        res.clearCookie('sessionId')
         res.redirect('/login')
-    // })
+    })
 })
 
 
