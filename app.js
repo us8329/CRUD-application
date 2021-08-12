@@ -6,9 +6,9 @@ const mongoose = require('mongoose')
 const multer = require('multer')
 const path = require('path');
 const fs = require('fs');
-const Register = require('./models/registers');
-const PRegister = require('./models/productRegisters')
-var Product = PRegister.find({});
+// const Register = require('./models/registers');
+// const PRegister = require('./models/productRegisters')
+// var Product = PRegister.find({});
 const { Session } = require('inspector');
 const uuid  = require('uuid').v4; 
 const port = 5050;
@@ -21,26 +21,27 @@ app.set('view-engine' , 'ejs');
 app.use(express.urlencoded({extended:false}))
 
 
-app.use(express.static(__dirname + "./public"));
+// app.use(express.static(__dirname + "./public"));
+app.use(express.static("uploads"))
+app.use(""  , require("./routes/routes"))
+
+// const storage = multer.diskStorage({
+//     // destination:"./public/uploads",
+//     destination:(req,res,cb)=>{
+//         cb(null,'')
+//     },
+//     filename: (req,file,cb)=>{
+//         const ext = path.extname(file.originalname)
+//         // const { originalname } = file;
+//         const filePath = '/Users/utkarshsinha/mongoosedemo/public/uploads/'
+//         cb(null,filePath + Date.now()+"_"+file.originalname)
+//     }
+// });
 
 
-const storage = multer.diskStorage({
-    // destination:"./public/uploads",
-    destination:(req,res,cb)=>{
-        cb(null,'')
-    },
-    filename: (req,file,cb)=>{
-        const ext = path.extname(file.originalname)
-        // const { originalname } = file;
-        const filePath = '/Users/utkarshsinha/mongoosedemo/public/uploads/'
-        cb(null,filePath + Date.now()+"_"+file.originalname)
-    }
-});
-
-
-const upload = multer({  
-    storage: storage 
-}) .single('productImage');
+// const upload = multer({  
+//     storage: storage 
+// }) .single('productImage');
 
 
 app.use(session({
@@ -54,153 +55,158 @@ app.use(session({
         secure: false,
     }
 }))
+// app.use((req,res,next)=>{
+//     res.local.message = req.session.message;
+//     delete req.session.message;
+//     next();
+// })
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}))
 
-app.get('/',(req,res)=>{
-    res.render('index.ejs' , {title : 'index page'})
-})
-app.get('/login' , (req,res)=>{
-    res.render('login.ejs' , {title:'login'})
-})
-app.get('/signup' , (req,res)=>{
-    res.render('signup.ejs' , {title: 'Signup'})
-})
-app.get('/home', (req,res , next)=>{
-    Product.exec(function(err , data){
-        res.render('home.ejs', {title:'Home', records : data})
-    });
+// app.get('/',(req,res)=>{
+//     res.render('index.ejs' , {title : 'index page'})
+// })
+// app.get('/login' , (req,res)=>{
+//     res.render('login.ejs' , {title:'login'})
+// })
+// app.get('/signup' , (req,res)=>{
+//     res.render('signup.ejs' , {title: 'Signup'})
+// })
+// app.get('/home', (req,res , next)=>{
+//     Product.exec(function(err , data){
+//         res.render('home.ejs', {title:'Home', records : data})
+//     });
     
-})
-app.get('/editProduct/:id' , (req,res , next)=>{
-    Product.exec(function(err , data){
-        res.render('editProduct.ejs' , {title: 'Edit User' , records : data})
-    });
-})
+// })
+// app.get('/editProduct/:id' , (req,res , next)=>{
+//     Product.exec(function(err , data){
+//         res.render('editProduct.ejs' , {title: 'Edit User' , records : data})
+//     });
+// })
 
-app.post('/signup', async (req,res)=>{
-    try{
-        const password = req.body.password;
-        const cpassword = req.body.confirmpassword;
-        if(password === cpassword){
-             const userRegister = new Register({
-                 username : req.body.username,
-                 password : password,
-                 confirmpassword : cpassword,
-             })
+// app.post('/signup', async (req,res)=>{
+//     try{
+//         const password = req.body.password;
+//         const cpassword = req.body.confirmpassword;
+//         if(password === cpassword){
+//              const userRegister = new Register({
+//                  username : req.body.username,
+//                  password : password,
+//                  confirmpassword : cpassword,
+//              })
 
-             const registered = await userRegister.save();
-            res.redirect('/login')
-        }else{
-            res.send('passwords do not match')
-        }
+//              const registered = await userRegister.save();
+//             res.redirect('/login')
+//         }else{
+//             res.send('passwords do not match')
+//         }
 
-    }catch (error){
-        res.status(400).send(error);
-    }
-})
+//     }catch (error){
+//         res.status(400).send(error);
+//     }
+// })
 
-app.post('/login' , async(req,res)=>{
-    try{
-        const username = req.body.username;
-        const password = req.body.password;
-        const username_check = await Register.findOne({username : username});
+// app.post('/login' , async(req,res)=>{
+//     try{
+//         const username = req.body.username;
+//         const password = req.body.password;
+//         const username_check = await Register.findOne({username : username});
 
-        const isMatch = await bcrypt.compare(password , username_check.password)
-        if(isMatch){
-            res.redirect('/home')
-        }
-        else{
-            res.send("invalid login credentials")
-        }
+//         const isMatch = await bcrypt.compare(password , username_check.password)
+//         if(isMatch){
+//             res.redirect('/home')
+//         }
+//         else{
+//             res.send("invalid login credentials")
+//         }
 
-    }catch(error){
-        res.status(400).send("Invalid user");
-    }
-})
+//     }catch(error){
+//         res.status(400).send("Invalid user");
+//     }
+// })
 
-app.post('/home',upload ,  async(req,res)=>{
-    try{
+// app.post('/home',upload ,  async(req,res)=>{
+//     try{
 
-        const pName = req.body.productName;
-        const pType = req.body.productType;
-        const avDate = req.body.availibilityDate;
-        const price = req.body.price;
-        const image = req.file.filename;
-        if(pName){
-        const productRegister = new PRegister({
-            productName: pName,
-            productType: pType,
-            availibilityDate:avDate,
-            price:price,
-            image: image
-        })
-        const product_registered = await productRegister.save();
-        res.redirect('/home')
-    }else{
-        res.status(400).send("please enter details");
-    }
-    }catch(error){
-        res.status(400).send(error);
-    }
+//         const pName = req.body.productName;
+//         const pType = req.body.productType;
+//         const avDate = req.body.availibilityDate;
+//         const price = req.body.price;
+//         const image = req.file.filename;
+//         if(pName){
+//         const productRegister = new PRegister({
+//             productName: pName,
+//             productType: pType,
+//             availibilityDate:avDate,
+//             price:price,
+//             image: image
+//         })
+//         const product_registered = await productRegister.save();
+//         res.redirect('/home')
+//     }else{
+//         res.status(400).send("please enter details");
+//     }
+//     }catch(error){
+//         res.status(400).send(error);
+//     }
 
-})
+// })
 
-app.post('/update/:id' ,upload , (req,res)=>{
-    let id = req.params.id
-    // console.log(id)
-    let new_image ='';
-    if(req.file){
-        new_image = req.file.filename;
-        try{
-            fs.unlinkSync("/uploads/"+req.body.image);
-        }catch(error){
-            console.log(error);
-        }
-    }else{
-        new_image = req.body.image;
-    }
-    PRegister.findByIdAndUpdate(id , {
-        productName: req.body.productName,
-        productType: req.body.productType,
-        availibilityDate:req.body.availibilityDate,
-        price:req.body.price,
-        image:new_image
-    })
-    res.redirect('/home')
-}) 
-app.get('/delete/:id' , upload,(req,res)=>{
-    let id = req.params.id;
-    PRegister.findByIdAndRemove(id,(error,result)=>{
-        if(result.image!=''){
-            try{
-                fs.unlinkSync(result.image);
-            }catch(error){
-                console.log(error);
-            }
-        }
-        if(err){
-            res.json({message:error.message});
-        }
-        else{
-            req.session.message={
-                type:'success',
-                message :"product deleted successfully"
-            }
-        }
-        res.redirect("/home")
-    })
-})
-app.post('/logout',(req,res)=>{
-    req.session.destroy(err=>{
-        if(err){
-            return res.render('home')
-        }
-        res.clearCookie('sessionId')
-        res.redirect('/login')
-    })
-})
+// app.post('/update/:id' ,upload , (req,res)=>{
+//     let id = req.params.id
+//     // console.log(id)
+//     let new_image ='';
+//     if(req.file){
+//         new_image = req.file.filename;
+//         try{
+//             fs.unlinkSync("/uploads/"+req.body.image);
+//         }catch(error){
+//             console.log(error);
+//         }
+//     }else{
+//         new_image = req.body.image;
+//     }
+//     PRegister.findByIdAndUpdate(id , {
+//         productName: req.body.productName,
+//         productType: req.body.productType,
+//         availibilityDate:req.body.availibilityDate,
+//         price:req.body.price,
+//         image:new_image
+//     })
+//     res.redirect('/home')
+// }) 
+// app.get('/delete/:id' , upload,(req,res)=>{
+//     let id = req.params.id;
+//     PRegister.findByIdAndRemove(id,(error,result)=>{
+//         if(result.image!=''){
+//             try{
+//                 fs.unlinkSync(result.image);
+//             }catch(error){
+//                 console.log(error);
+//             }
+//         }
+//         if(err){
+//             res.json({message:error.message});
+//         }
+//         else{
+//             req.session.message={
+//                 type:'success',
+//                 message :"product deleted successfully"
+//             }
+//         }
+//         res.redirect("/home")
+//     })
+// })
+// app.post('/logout',(req,res)=>{
+//     req.session.destroy(err=>{
+//         if(err){
+//             return res.render('home')
+//         }
+//         res.clearCookie('sessionId')
+//         res.redirect('/login')
+//     })
+// })
 
 
 
