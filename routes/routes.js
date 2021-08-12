@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const path = require('path');
@@ -8,8 +9,20 @@ const PRegister = require('../models/productRegisters')
 const multer = require('multer')
 var Product = PRegister.find({});
 const router = express.Router();
+const two_hours = 7200000
 
 
+router.use(session({
+    name :'sessionId',
+    resave: false,
+    saveUninitialized: false, 
+    secret: 'it is a secret' , 
+    cookie:{
+        maxAge:two_hours,
+        sameSite : true,
+        secure: false,
+    }
+}))
 const storage = multer.diskStorage({
     // destination:"./public/uploads",
     destination:(req,res,cb)=>{
@@ -177,7 +190,7 @@ router.post('/update/:id' ,upload , (req,res)=>{
 }) 
 router.get('/delete/:id' , upload,(req,res)=>{
     let id = req.params.id;
-    PRegister.findByIdAndRemove(id,(error,result)=>{
+    PRegister.findByIdAndRemove(id,(err,result)=>{
         if(result.image!=''){
             try{
                 fs.unlinkSync(result.image);
@@ -185,15 +198,15 @@ router.get('/delete/:id' , upload,(req,res)=>{
                 console.log(error);
             }
         }
-        if(err){
-            res.json({message:error.message});
-        }
-        else{
-            req.session.message={
-                type:'success',
-                message :"product deleted successfully"
-            }
-        }
+        // if(err){
+        //     res.json({message:error.message});
+        // }
+        // else{
+        //     req.session.message={
+        //         type:'success',
+        //         message :"product deleted successfully"
+        //     }
+        // }
         res.redirect("/home")
     })
 })
