@@ -130,10 +130,10 @@
               <td>
                 <!-- <button type="button" class =" btn btn-primary btn-md">edit</button> -->
                 <!-- <button type="button" class ="btn btn-light btn-sm">delete</button> -->
-                <a href='/edit' class="text-success">
+                <a href='/editProduct/<%= row._id%>' class="text-success">
                   <i class = 'fas fa-edit fa-lg mx-2'></i>
                 </a>
-                <a href='/delete' class="text-danger">
+                <a href='/delete/<%= row._id%>' class="text-danger">
                   <i class = 'fas fa-trash fa-lg mx-2 red-color'></i>
                 </a>
               </td>
@@ -144,17 +144,3 @@
     <%}%> 
 </div>
 
-<!-- <script>
-  const loadImages = async()=>{
-    const response = await fetch('http://localhost:5050/uploads                                                                                                    ').then(response => response.json());
-    const imagesElement = document.querySelector('.uploads');
-    imagesElement.innerHTML = '';
-    response.uploads.forEach(upload =>{
-      const img = document.createElement('img');
-      img.src = upload.filePath;
-      img.width = '70';
-      imagesElement.appendChild(img)
-    });
-  };
-  window.onload = loadImages;
-</script> -->

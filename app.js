@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose')
 const multer = require('multer')
 const path = require('path');
+const fs = require('fs');
 const Register = require('./models/registers');
 const PRegister = require('./models/productRegisters')
 var Product = PRegister.find({});
@@ -71,6 +72,11 @@ app.get('/home', (req,res , next)=>{
         res.render('home.ejs', {title:'Home', records : data})
     });
     
+})
+app.get('/editProduct/:id' , (req,res , next)=>{
+    Product.exec(function(err , data){
+        res.render('editProduct.ejs' , {title: 'Edit User' , records : data})
+    });
 })
 
 app.post('/signup', async (req,res)=>{
@@ -141,6 +147,51 @@ app.post('/home',upload ,  async(req,res)=>{
 
 })
 
+app.post('/update/:id' ,upload , (req,res)=>{
+    let id = req.params.id
+    // console.log(id)
+    let new_image ='';
+    if(req.file){
+        new_image = req.file.filename;
+        try{
+            fs.unlinkSync("/uploads/"+req.body.image);
+        }catch(error){
+            console.log(error);
+        }
+    }else{
+        new_image = req.body.image;
+    }
+    PRegister.findByIdAndUpdate(id , {
+        productName: req.body.productName,
+        productType: req.body.productType,
+        availibilityDate:req.body.availibilityDate,
+        price:req.body.price,
+        image:new_image
+    })
+    res.redirect('/home')
+}) 
+app.get('/delete/:id' , upload,(req,res)=>{
+    let id = req.params.id;
+    PRegister.findByIdAndRemove(id,(error,result)=>{
+        if(result.image!=''){
+            try{
+                fs.unlinkSync(result.image);
+            }catch(error){
+                console.log(error);
+            }
+        }
+        if(err){
+            res.json({message:error.message});
+        }
+        else{
+            req.session.message={
+                type:'success',
+                message :"product deleted successfully"
+            }
+        }
+        res.redirect("/home")
+    })
+})
 app.post('/logout',(req,res)=>{
     req.session.destroy(err=>{
         if(err){
@@ -150,6 +201,7 @@ app.post('/logout',(req,res)=>{
         res.redirect('/login')
     })
 })
+
 
 
 app.listen(port ,() => console.log('app is listening'))
