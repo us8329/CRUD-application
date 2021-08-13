@@ -26,13 +26,15 @@ router.use(session({
 const storage = multer.diskStorage({
     // destination:"./public/uploads",
     destination:(req,res,cb)=>{
-        cb(null,'')
+        // cb(null,'/Users/utkarshsinha/mongoosedemo/public/uploads/')
+        cb(null,'');
     },
     filename: (req,file,cb)=>{
         const ext = path.extname(file.originalname)
         // const { originalname } = file;
         const filePath = '/Users/utkarshsinha/mongoosedemo/public/uploads/'
         cb(null,filePath + Date.now()+"_"+file.originalname)
+        // cb(null,Date.now()+"_"+file.originalname)
     }
 });
 
@@ -161,11 +163,12 @@ router.post('/home',upload ,  async(req,res)=>{
 router.post('/update/:id' ,upload , (req,res)=>{
     let id = req.params.id
     // console.log(id)
-    let new_image =req.body.image;
+    let new_image ='';
+    // console.log(new_image)
     if(req.file){
         new_image = req.file.filename;
         try{
-            fs.unlinkSync("/uploads/"+req.body.image);
+            fs.unlinkSync(req.body.image);
         }catch(error){
             console.log(error);
         }
@@ -193,6 +196,7 @@ router.get('/delete/:id' , upload,(req,res)=>{
     PRegister.findByIdAndRemove(id,(err,result)=>{
         if(result.image!=''){
             try{
+
                 fs.unlinkSync(result.image);
             }catch(error){
                 console.log(error);
