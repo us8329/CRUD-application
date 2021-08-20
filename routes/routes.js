@@ -23,25 +23,21 @@ router.use(session({
         secure: false,
     }
 }))
-const storage = multer.diskStorage({
-    // destination:"./public/uploads",
-    destination:(req,res,cb)=>{
-        // cb(null,'/Users/utkarshsinha/mongoosedemo/public/uploads/')
-        cb(null,'');
-    },
-    filename: (req,file,cb)=>{
-        const ext = path.extname(file.originalname)
-        // const { originalname } = file;
-        const filePath = '/Users/utkarshsinha/mongoosedemo/public/uploads/'
-        cb(null,filePath + Date.now()+"_"+file.originalname)
-        // cb(null,Date.now()+"_"+file.originalname)
-    }
-});
+// const storage = multer.diskStorage({
+//     destination:(req,res,cb)=>{
+//         cb(null,'/uploads');
+//     },
+//     filename: (req,file,cb)=>{
+//         // const ext = path.extname(file.originalname)
+//         // const filePath = '/Users/utkarshsinha/mongoosedemo/uploads/'
+//         cb(null,new Date.toISOString() + "-" + file.originalname)
+//     }
+// });
 
 
-const upload = multer({  
-    storage: storage 
-}) .single('productImage');
+// const upload = multer({  
+//     storage: storage 
+// }) .single('productImage');
 
 
 router.get('/',(req,res)=>{
@@ -133,21 +129,25 @@ router.post('/login' , async(req,res)=>{
     }
 })
 
-router.post('/home',upload ,  async(req,res)=>{
+router.post('/home',   async(req,res)=>{
     try{
 
         const pName = req.body.productName;
         const pType = req.body.productType;
         const avDate = req.body.availibilityDate;
         const price = req.body.price;
-        const image = req.file.filename;
+        // const image = req.file.filename;
+        const image = req.file;
+
+        const imgUrl = image.path;
+
         if(pName){
         const productRegister = new PRegister({
             productName: pName,
             productType: pType,
             availibilityDate:avDate,
             price:price,
-            image: image
+            image: imgUrl
         })
         const product_registered = await productRegister.save(); 
         res.redirect('/home')
@@ -160,7 +160,7 @@ router.post('/home',upload ,  async(req,res)=>{
 
 })
 
-router.post('/update/:id' ,upload , (req,res)=>{
+router.post('/update/:id' , (req,res)=>{
     let id = req.params.id
     // console.log(id)
     let new_image ='';
@@ -191,7 +191,7 @@ router.post('/update/:id' ,upload , (req,res)=>{
     })
     
 }) 
-router.get('/delete/:id' , upload,(req,res)=>{
+router.get('/delete/:id' ,(req,res)=>{
     let id = req.params.id;
     PRegister.findByIdAndRemove(id,(err,result)=>{
         if(result.image!=''){
