@@ -30,7 +30,7 @@ const app = express();
 // app.use(cors)
 app.set('view-engine' , 'ejs');
 app.use(express.urlencoded({extended:false}))
-// app.use(express.static("uploads"))
+app.use('/uploads' , express.static('uploads'))
 app.use(""  , require("./routes/routes"))
 
 app.use(session({
