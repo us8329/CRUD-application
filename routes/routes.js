@@ -7,6 +7,7 @@ const fs = require('fs');
 const Register = require('../models/registers');
 const PRegister = require('../models/productRegisters')
 const multer = require('multer')
+
 var Product = PRegister.find({});
 const router = express.Router();
 const two_hours = 7200000
@@ -23,18 +24,18 @@ router.use(session({
         secure: false,
     }
 }))
-// const storage = multer.diskStorage({
-//     destination:(req,res,cb)=>{
-//         cb(null,'/uploads');
-//     },
-//     filename: (req,file,cb)=>{
-//         // const ext = path.extname(file.originalname)
-//         // const filePath = '/Users/utkarshsinha/mongoosedemo/uploads/'
-//         cb(null,new Date.toISOString() + "-" + file.originalname)
-//     }
-// });
+const storage = multer.diskStorage({
+    destination:(req,res,cb)=>{
+        cb(null,'/uploads/');
+    },
+    filename: (req,file,cb)=>{
+        // const ext = path.extname(file.originalname)
+        // const filePath = '/Users/utkarshsinha/mongoosedemo/uploads/'
+        cb(null,new Date.toISOString() + file.originalname)
+    }
+});
 
-
+const upload = multer({dest:'uploads/'})
 // const upload = multer({  
 //     storage: storage 
 // }) .single('productImage');
@@ -129,9 +130,9 @@ router.post('/login' , async(req,res)=>{
     }
 })
 
-router.post('/home',   async(req,res)=>{
+router.post('/home',  upload.single('productImage') ,  async(req,res)=>{
     try{
-
+        console.log(req.file)
         const pName = req.body.productName;
         const pType = req.body.productType;
         const avDate = req.body.availibilityDate;

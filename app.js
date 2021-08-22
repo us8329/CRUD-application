@@ -16,21 +16,21 @@ require("./db/connection");
 const app = express();
 
 
-const storage = multer.diskStorage({
-    destination:(req,res,cb)=>{
-        cb(null,'/uploads');
-    },
-    filename: (req,file,cb)=>{
-        // const ext = path.extname(file.originalname)
-        // const filePath = '/Users/utkarshsinha/mongoosedemo/uploads/'
-        cb(null,new Date.toISOString() + "-" + file.originalname)
-    }
-});
+// const storage = multer.diskStorage({
+//     destination:(req,res,cb)=>{
+//         cb(null,'/uploads');
+//     },
+//     filename: (req,file,cb)=>{
+//         // const ext = path.extname(file.originalname)
+//         // const filePath = '/Users/utkarshsinha/mongoosedemo/uploads/'
+//         cb(null,new Date.toISOString() + "-" + file.originalname)
+//     }
+// });
 
 // app.use(cors)
 app.set('view-engine' , 'ejs');
 app.use(express.urlencoded({extended:false}))
-app.use(express.static("uploads"))
+// app.use(express.static("uploads"))
 app.use(""  , require("./routes/routes"))
 
 app.use(session({
@@ -51,9 +51,9 @@ app.use(bodyParser.urlencoded({extended:true}))
 
 
 
-app.use(multer({storage : storage}).single('productImage'))
+// app.use(multer({storage : storage}).single('productImage'))
 
-app.use("/uploads",express.static(path.join(__dirname , "uploads")))
+// app.use("/uploads",express.static(path.join(__dirname , "uploads")))
 
 
 app.listen(port ,() => console.log('app is listening'))
