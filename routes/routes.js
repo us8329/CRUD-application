@@ -58,25 +58,6 @@ router.get('/home', (req,res , next)=>{
     });
     
 })
-// router.get('/editProduct/:id' , (req,res)=>{
-//     let id = req.params.id;
-//     PRegister.findById(id,(err,productRegister)=>{
-//         console.log(err);
-//         if(error){
-//             res.redirect('/home');
-//         }
-//         else{
-//             if(productRegister == null)
-//                 res.redirect('/home')
-//             else{
-//                 res.render('/editProduct',{
-//                     title:'Edit Product',
-//                     records : productRegister
-//                 })
-//             }
-//         }
-//     })
-// })
 router.get('/editProduct/:id' , (req,res , next)=>{
     let id = req.params.id;
     Product.exec(function(err , data){
@@ -197,15 +178,6 @@ router.get('/delete/:id' ,(req,res)=>{
                 console.log(error);
             }
         }
-        // if(err){
-        //     res.json({message:error.message});
-        // }
-        // else{
-        //     req.session.message={
-        //         type:'success',
-        //         message :"product deleted successfully"
-        //     }
-        // }
         res.redirect("/home")
     })
 })
